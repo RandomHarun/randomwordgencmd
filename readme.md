@@ -4,13 +4,17 @@ This is a random word generator command line tool. If you provide it with a word
 
 # Disclaimer
 
-**This is a learning project.** I am not an experienced programmer. Do not expect a robust piece of software. This will surely break if the wordlist is not formatted correctly or if the command line arguments given are misspelled. What happens then is really up to anyone's guess. Feel free to give advice and if you see something that you consider very bad practice in coding, feel free to correct me. However, I might take a long time to respond. Furthermore if you see something terrible, please consider that I didn't know any better.
+**This is a learning project.** I am not an experienced programmer. Do not expect a robust piece of software. It's probably not entirely safe to use. I did put in some checks but not that many. This will surely break if the wordlist is not formatted correctly or if the command line arguments given are misspelled. What happens then is really up to anyone's guess. Feel free to give advice and if you see something that you consider very bad practice in coding, feel free to correct me. However, I might take a long time to respond. Furthermore if you see something terrible, please consider that I didn't know any better.
 
 # Download 
 
-[1.0 Release](https://github.com/RandomHarun/randomwordgencmd/releases/tag/v1.0)
+~~
+[1.0 Release](https://github.com/RandomHarun/randomwordgencmd/)
 
 Please download the executable as well as the wordlist file. Both are needed. Alternatively you may create your own wordlist. It should contain one word per line, which is to say one line will be considered one word by the program. The wordlist should not contain duplicates. I have not tested unicode characters which probably means they won't work.
+~~
+
+For now, no download! Microsoft seems to think this is a virus and since I don't know why and don't want to be seen as someone spreading malicious software this'll have to get fixed.
 
 # Usage / Features
 
