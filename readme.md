@@ -6,9 +6,15 @@ This is a random word generator command line tool. It uses [libsodium](https://g
 
 **This is a learning project.** I am not an experienced programmer. Do not expect a robust piece of software. This will surely break if the wordlist is not formatted correctly or if the command line arguments given are misspelled. What happens then is really up to anyone's guess. Feel free to give advice and if you see something that you consider very bad practice in coding, feel free to correct me. However, I might take a long time to respond. Furthermore if you see something terrible, please consider that I didn't know any better.
 
+# Download 
+
+[1.0 Release](https://github.com/RandomHarun/randomwordgencmd/releases/tag/v1.0)
+
+Please download the executable as well as the wordlist file. Both are needed. Alternatively you may create your own wordlist. It should contain one word per line, which is to say one line will be considered one word by the program. The wordlist should not contain duplicates. I have not tested unicode characters which probably means they won't work.
+
 # Usage / Features
 
-This being a command line tool, put the executable where you want, open a command line shell and run it from there to see console output. It is designed to run smoothely in a script. Given the above disclaimer, I would however not recommend using it in any important automated process.
+This being a command line tool, put the executable where you want, open a command line shell and run it from there to see console output. If you put the provided wordlist.txt in the same directory as the executable it should work "out of the box". It is designed to run smoothely in a script. Given the above disclaimer, I would however not recommend using it in any important automated process.
 
 ## Possible Arguments
 
@@ -20,9 +26,9 @@ This being a command line tool, put the executable where you want, open a comman
 -  [-v] Enable verbose display. (more information about chosen settings and odds of the calculated sequence being guessed.)
 
 # ToDo
-
+-  Test the actual randomness of the output by outputting a lot of words and counting the duplicates.
 -  Make it run faster. I realise it's terribly slow.
--  Make the code more robust
+-  Make the code more robust. I.E. have the flag "parsing" be mindful of misspellings, falsely left out info etc
 -  Port it to other operating systems
 -  ???
 
