@@ -1,6 +1,6 @@
 # About
 
-This is a random word generator command line tool. It uses [libsodium](https://github.com/jedisct1/libsodium) for generating a random uniform number based on the size of the wordlist given. I sourced mine from [here](https://www.mit.edu/~ecprice/wordlist.10000), however I stripped all words with less than 4 characters, so it winds up being 8900 words. The intent is to use this to generate random passwords, inspired by this [XKCD](https://xkcd.com/936/).
+This is a random word generator command line tool. If you provide it with a wordlist (see Download/Usage) it will use [libsodium](https://github.com/jedisct1/libsodium) for generating a random uniform number based on the size of the wordlist given. This *should* mean that every word in that list is equally likely to occur. I sourced mine from [here](https://www.mit.edu/~ecprice/wordlist.10000), however I stripped all words with less than 4 characters, so it winds up being 8900 words. The intent is to use this to generate random passwords, inspired by this [XKCD](https://xkcd.com/936/).
 
 # Disclaimer
 
