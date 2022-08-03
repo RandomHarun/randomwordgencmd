@@ -8,10 +8,7 @@ This is a random word generator command line tool. If you provide it with a word
 
 # Download 
 
-~~
-[1.0 Release](https://github.com/RandomHarun/randomwordgencmd/)
-
-Please download the executable as well as the wordlist file. Both are needed. Alternatively you may create your own wordlist. It should contain one word per line, which is to say one line will be considered one word by the program. The wordlist should not contain duplicates. I have not tested unicode characters which probably means they won't work.
+~~Please download the executable as well as the wordlist file. Both are needed. Alternatively you may create your own wordlist. It should contain one word per line, which is to say one line will be considered one word by the program. The wordlist should not contain duplicates. I have not tested unicode characters which probably means they won't work.
 ~~
 
 For now, no download! Microsoft seems to think this is a virus and since I don't know why and don't want to be seen as someone spreading malicious software this'll have to get fixed.
