@@ -12,12 +12,12 @@ This being a command line tool, put the executable where you want, open a comman
 
 ## Possible Arguments
 
-[-h] or no argument to display this help info.\\
-[-i wordlist] path to wordlist text file. 1 word per line. Will try to open a "wordlist.txt" in the same folder as the executable by default.\\
-[-o output-file] path to output file. if none given, output will be to the console.\\
-[-n count] number of random words to generate, default is 1.\\
-[-d delimiter] delimiting string between output words(can be single character), newline by default.\\
-[-v] Enable verbose display. (more information about chosen settings and odds of the calculated sequence being guessed.)\\
+-  [-h] or no argument to display this help info.
+-  [-i wordlist] path to wordlist text file. 1 word per line. Will try to open a "wordlist.txt" in the same folder as the executable by default.
+-  [-o output-file] path to output file. if none given, output will be to the console.
+-  [-n count] number of random words to generate, default is 1.
+-  [-d delimiter] delimiting string between output words(can be single character), newline by default.
+-  [-v] Enable verbose display. (more information about chosen settings and odds of the calculated sequence being guessed.)
 
 # ToDo
 
@@ -30,7 +30,6 @@ This being a command line tool, put the executable where you want, open a comman
 
 [ISC license](https://en.wikipedia.org/wiki/ISC_license)
 
-ISC License
 ```
 Copyright 2022 Phillip Haarhaus
 
