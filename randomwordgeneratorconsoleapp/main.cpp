@@ -5,30 +5,38 @@ Motivation: https://xkcd.com/936/
 This is a learning project. It is intended for personal use, i.e. not to be integrated into some larger automated process. It is not tested to be rigorous against unforseen inputs. Accidental file deletion may occur. Use at your own risk.
 */
 
-
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <chrono>
 #include <math.h>
 #include "sodium.h"
 
+struct wordliststruct {
+	uint32_t wordcount;
+	uint16_t biggestword;
+} wordliststats;
+
 uint32_t randombytes_uniform(const uint32_t upper_bound);
 
-
-int getwordlistsize(std::ifstream *wordlist)
+void getwordliststats(std::ifstream *wordlist)
 {
 	std::string line;
 	unsigned int linecount = 0;
+	unsigned int biggestline = 0;
 
 	while (std::getline(*wordlist, line))
 	{
 		++linecount;
-	}
-	
-	wordlist->clear();
-	wordlist->seekg(0, std::ios::beg);
+		if (line.size() > biggestline)
+		{
+			biggestline = line.size();
+		}
 
-	return linecount;
+	}
+
+	wordliststats.wordcount = linecount;
+	wordliststats.biggestword = biggestline;
 }
 
 int main(int argc, char **argv)
@@ -41,7 +49,7 @@ int main(int argc, char **argv)
 	uint32_t wordstogenerate = 1;
 	std::ifstream wordlist;
 	std::ofstream outputfile;
-	
+		
 	//output usage info if no command line arguments are given
 	if (argc == 1)
 	{
@@ -95,8 +103,8 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	uint32_t wordlistsize = getwordlistsize(&wordlist);
-	
+	getwordliststats(&wordlist);
+		
 	if (verboselogging) {
 		std::cout << "Verbose Display enabled." << std::endl;
 		std::cout << std::endl;
@@ -132,9 +140,9 @@ int main(int argc, char **argv)
 				
 		std::cout << std::endl;
 		
-		double decimalodds = pow(1 / double(wordlistsize), wordstogenerate); //This might be bad for large wordlists but I don't know how to make it better.
+		double decimalodds = pow(1 / double(wordliststats.wordcount), wordstogenerate); //This might be bad for large wordlists but I don't know how to make it better.
 
-		std::cout << "The wordlist is of size: " << wordlistsize << ".\nIf any word is equally likely to occur, the chance of randomly guessing the sequence of generated words is 1/wordlist-size^word-count, in this case:" << std::endl;
+		std::cout << "The wordlist is of size: " << wordliststats.wordcount << ".\nIf any word is equally likely to occur, the chance of randomly guessing the sequence of generated words is 1/wordlist-size^word-count, in this case:" << std::endl;
 		std::cout << decimalodds << std::endl;
 		std::cout << std::endl;
 
@@ -152,12 +160,13 @@ int main(int argc, char **argv)
 	//look up the wordlist, get random words in accordance with the wordlist size, ouput them to where they are needed.
 	for (unsigned int generatedwords = 0; generatedwords < wordstogenerate; generatedwords++)
 	{
-		uint32_t randomnumber = randombytes_uniform(wordlistsize);
+		uint32_t randomnumber = randombytes_uniform(wordliststats.wordcount);
 
 		wordlist.clear();
 		wordlist.seekg(0, std::ios::beg);
 
-		for (unsigned int x = 0; getline(wordlist, line) && x < randomnumber; x++)
+		//advances streampointer(??) until the word corresponding to the generated random number is found
+		for (unsigned int currentline = 0; getline(wordlist, line) && currentline < randomnumber; currentline++)
 		{
 			continue;
 		}
