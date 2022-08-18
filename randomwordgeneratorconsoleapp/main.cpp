@@ -2,14 +2,15 @@
 Random Word Generator Command-Line Tool
 Author: Phillip Haarhaus, 2022
 Motivation: https://xkcd.com/936/
-This is a learning project. It is intended for personal use, i.e. not to be integrated into some larger automated process. It is not tested to be rigorous against unforseen inputs. Accidental file deletion may occur. Use at your own risk.
+This is a learning project. It is intended for personal use, i.e. not to be integrated into some larger automated process. It is not tested to be rigorous against unforseen inputs. Accidental file overwriting may occur. Use at your own risk.
 */
 
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <chrono>
 #include <math.h>
+#include <algorithm>
+#include <vector>
 #include "sodium.h"
 
 struct wordliststruct {
@@ -19,24 +20,33 @@ struct wordliststruct {
 
 uint32_t randombytes_uniform(const uint32_t upper_bound);
 
+//I expect one word per line but I don't want to check for / prevent that not being the case and it shouldn't matter ultimately.
 void getwordliststats(std::ifstream *wordlist)
 {
-	std::string line;
-	unsigned int linecount = 0;
-	unsigned int biggestline = 0;
+	std::string word;
+	uint32_t wordcount = 0;
+	uint32_t biggestword = 0;
 
-	while (std::getline(*wordlist, line))
+	while (std::getline(*wordlist, word))
 	{
-		++linecount;
-		if (line.size() > biggestline)
+		++wordcount;
+		if (word.size() > biggestword)
 		{
-			biggestline = line.size();
+			biggestword = word.size();
 		}
-
 	}
 
-	wordliststats.wordcount = linecount;
-	wordliststats.biggestword = biggestline;
+	wordliststats.wordcount = wordcount;
+	wordliststats.biggestword = biggestword;
+}
+
+std::string generaterandomword(std::string randomword, std::string *wordlistarray, uint32_t arrayelementcount)
+{
+	uint32_t randomnumber = randombytes_uniform(arrayelementcount);
+
+	randomword = wordlistarray[randomnumber];
+
+	return randomword;
 }
 
 int main(int argc, char **argv)
@@ -45,15 +55,17 @@ int main(int argc, char **argv)
 	std::string wordlistpath;
 	std::string outputpath;
 	std::string delimiter;
+	std::string line;
 	bool verboselogging = 0;
-	uint32_t wordstogenerate = 1;
+	uint64_t wordstogenerate = 1;
 	std::ifstream wordlist;
 	std::ofstream outputfile;
+	
 		
 	//output usage info if no command line arguments are given
 	if (argc == 1)
 	{
-		std::cout << usagestring << std::endl;
+		std::cout << usagestring << "\n";
 	}
 		
 	//handle command line arguments, skipping the 0th, because that will always be the path of the executing application and not useful for this purpose.
@@ -63,7 +75,7 @@ int main(int argc, char **argv)
 		
 		if (currentargv == std::string("-h"))
 		{
-			std::cout << usagestring << std::endl;
+			std::cout << usagestring << "\n";
 		}
 		else if (currentargv == std::string("-i"))
 		{
@@ -99,113 +111,124 @@ int main(int argc, char **argv)
 
 	if (!wordlist)
 	{
-		std::cout << "The wordlist file was not found or could not be opened." << std::endl;
+		std::cout << "The wordlist file was not found or could not be opened." << "\n";
 		return 0;
 	}
 
 	getwordliststats(&wordlist);
+
+	std::string *wordlistarray = new std::string[wordliststats.wordcount];
+	
+	wordlist.clear();
+	wordlist.seekg(0, std::ios::beg);
+
+	uint32_t arrayindexiterator = 0; //this will double as the array element count once the array is filled.
+
+	for (; arrayindexiterator < wordliststats.wordcount; arrayindexiterator++)
+	{
+		getline(wordlist, line);
+		wordlistarray[arrayindexiterator] = line;
+	}
+
+	wordlist.close();
 		
 	if (verboselogging) {
-		std::cout << "Verbose Display enabled." << std::endl;
-		std::cout << std::endl;
+		std::cout << "Verbose Display enabled." << "\n";
+		std::cout << "\n";
 		
 		if (wordlistpath == std::string(""))
 		{
-			std::cout << "The wordlist path is: " << "not given. Using default wordlist.txt in current path if it exists." << std::endl;
+			std::cout << "The wordlist path is: " << "not given. Using default wordlist.txt in current path if it exists." << "\n";
 		}
 		else 
 		{
-			std::cout << "The wordlist path is: " << wordlistpath << std::endl;
+			std::cout << "The wordlist path is: " << wordlistpath << "\n";
 		}
 		
 		if (outputpath == std::string(""))
 		{
-			std::cout << "The output filepath is: " << "not given. Output will be to the console." << std::endl;
+			std::cout << "The output filepath is: " << "not given. Output will be to the console." << "\n";
 		}
 		else
 		{
-			std::cout << "The output filepath is: " << outputpath << std::endl;
+			std::cout << "The output filepath is: " << outputpath << "\n";
 		}
 
-		std::cout << "The number of words to generate is: " << wordstogenerate << std::endl;
+		std::cout << "The number of words to generate is: " << wordstogenerate << "\n";
 
 		if (delimiter == std::string(""))
 		{
-			std::cout << "The delimiter is: " << "not given. Default CLRF aka newline will be used." << std::endl;
+			std::cout << "The delimiter is: " << "not given. Default CLRF aka newline will be used." << "\n";
 		}
 		else
 		{
-			std::cout << "The delimiter is: " << delimiter << std::endl;
+			std::cout << "The delimiter is: " << delimiter << "\n";
 		}
 				
-		std::cout << std::endl;
+		std::cout << "\n";
 		
 		double decimalodds = pow(1 / double(wordliststats.wordcount), wordstogenerate); //This might be bad for large wordlists but I don't know how to make it better.
 
-		std::cout << "The wordlist is of size: " << wordliststats.wordcount << ".\nIf any word is equally likely to occur, the chance of randomly guessing the sequence of generated words is 1/wordlist-size^word-count, in this case:" << std::endl;
-		std::cout << decimalodds << std::endl;
-		std::cout << std::endl;
+		std::cout << "The wordlist is of size: " << wordliststats.wordcount << ".\nIf any word is equally likely to occur, the chance of randomly guessing the sequence of generated words is 1/wordlist-size^word-count, in this case:" << "\n";
+		std::cout << decimalodds << "\n";
+		std::cout << "\n";
 
 		if (outputpath == std::string(""))
 		{
-			std::cout << "The randomly generated words are these:" << std::endl;
+			std::cout << "The randomly generated words are these:" << "\n";
 		}		
 	}
-	
-	//open filestream for output file.
-	outputfile.open(outputpath);
 
-	std::string line;
-
-	//look up the wordlist, get random words in accordance with the wordlist size, ouput them to where they are needed.
-	for (unsigned int generatedwords = 0; generatedwords < wordstogenerate; generatedwords++)
+	//if outputpath was not defined in command line arguments, output to the console, otherwise output to the defined file.
+	if (outputpath == std::string(""))
 	{
-		uint32_t randomnumber = randombytes_uniform(wordliststats.wordcount);
-
-		wordlist.clear();
-		wordlist.seekg(0, std::ios::beg);
-
-		//advances streampointer(??) until the word corresponding to the generated random number is found
-		for (unsigned int currentline = 0; getline(wordlist, line) && currentline < randomnumber; currentline++)
+		if (delimiter == std::string("") and argc != 1)
 		{
-			continue;
+			for (unsigned int generatedwords = 0; generatedwords < wordstogenerate; generatedwords++)
+			{
+				line = generaterandomword(line, wordlistarray, arrayindexiterator);
+				std::cout << line << "\n";
+			}			
 		}
-
-		//if outputpath was not defined in command line arguments, output to the console, otherwise output to the defined file.
-		if (outputpath == std::string(""))
+		else if (argc != 1)
 		{
-			if (delimiter == std::string("") and argc != 1)
+			for (unsigned int generatedwords = 0; generatedwords < wordstogenerate; generatedwords++)
 			{
-				std::cout << line << std::endl;
-			}
-			else if (argc != 1)
-			{
+				line = generaterandomword(line, wordlistarray, arrayindexiterator);
 				std::cout << line << delimiter;
 			}
-			else break;
-		}
-		else
-		{
-			if (!outputfile)
-			{
-				std::cout << "The output file could not be opened. The application will try to create a file (but not folders) and overwrite existing ones so this is probably an invalid path or a permissions issue." << std::endl;
-				wordlist.close();
-				return 0;
-			}
-
-			if (delimiter == std::string("") and argc != 1)
-			{
-				outputfile << line << std::endl;
-			}
-			else if (argc != 1)
-			{
-				outputfile << line << delimiter;
-			}
-			else break;
 		}
 	}
+	else
+	{
+		outputfile.open(outputpath);
+
+		if (!outputfile)
+		{
+			std::cout << "The output file could not be opened. The application will try to create a file (but not folders) and overwrite existing ones so this is probably an invalid path or a permissions issue." << "\n";
+			wordlist.close();
+			return 0;
+		}
+
+		if (delimiter == std::string("") and argc != 1)
+		{
+			for (unsigned int generatedwords = 0; generatedwords < wordstogenerate; generatedwords++)
+			{
+				line = generaterandomword(line, wordlistarray, arrayindexiterator);
+				outputfile << line << "\n";
+			}			
+		}
+		else if (argc != 1)
+		{
+			for (unsigned int generatedwords = 0; generatedwords < wordstogenerate; generatedwords++)
+			{
+				line = generaterandomword(line, wordlistarray, arrayindexiterator);
+				outputfile << line << delimiter;
+			}			
+		}
+
+		outputfile.close();
+	}	
 	
-	outputfile.close();
-	wordlist.close();
 	return 0;
 }
